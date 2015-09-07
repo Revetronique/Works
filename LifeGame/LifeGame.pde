@@ -1,9 +1,3 @@
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 CellAutomata ca;
 
 //Display property
@@ -13,7 +7,7 @@ int radius = diameter / 2;
 
 void setup(){
   //Initialize the instance of class CA
-  int numLine = 200;
+  int numLine = 50;
   ca = new CellAutomata(numLine);
   ca.initCells(0.21);
   
@@ -42,6 +36,7 @@ void draw(){
     }
   }
   
+  //multi threading
   Thread th = new Thread(ca);
   th.start(); 
 }
@@ -68,8 +63,6 @@ void keyPressed(){
       break;
   }
 }
-
-
 
 class CellAutomata implements Runnable {
   public final int BOUNDARYDEAD = 0;  //default
@@ -225,49 +218,3 @@ class CellAutomata implements Runnable {
     }
   }
 }
-
-/*
-class UpdateState implements Callable<Integer> {
-  byte state;
-  byte[] nbrAlive;
-  
-  UpdateState(byte _st, byte... _nbr){
-    this.state = _st;
-    this.nbrAlive = _nbr;
-  }
-  
-  @Override
-  public Integer call() throws Exception {
-    byte rslt = 0;  //how much cells alive
-    
-    for(int i = 0; i < this.nbrAlive.length; i++)  rslt += nbrAlive[i];
-    
-      //estimate whether the state become alive or 
-      if(rslt == 3)       return 1;                                   //birth or alive (3)
-      else if(rslt == 2)  return Integer.valueOf((int)state); //keep (2)            
-      else                return 0;                                   //death (2 nor 3)
-  }
-}
-
-public void update(){
-  //update all of the cell state
-  for(int i = 0; i < this.numCell; i++){    //vertical
-    for(int j = 0; j < this.numCell; j++){  //horizontal
-      ExecutorService ex = Executors.newCachedThreadPool();
-      Future<Integer> future = ex.submit(new UpdateState(GetCellState(j, i), getAliveNeighborCells(j, i)));
-      
-      try{
-        nextCell[i * this.numCell + j] = (byte)future.get().intValue();
-      }catch(InterruptedException e){
-        e.printStackTrace();
-      }catch(ExecutionException e){
-       e.printStackTrace();
-      }
-      
-      ex.shutdown();
-    }
-  }
-  
-  stateCell = nextCell;
-}
-*/
